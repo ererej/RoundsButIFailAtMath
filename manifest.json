@@ -1,0 +1,10 @@
+{
+    "name": "RoundsButIFailAtMath",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Senyksia/RoundsButIFailAtMath",
+    "description": "A party mod that randomises card stats each game!",
+    "dependencies": [
+	"BepInEx-BepInExPack_ROUNDS-5.4.1100",
+	"willis81808-UnboundLib-2.10.2"
+    ]
+}
