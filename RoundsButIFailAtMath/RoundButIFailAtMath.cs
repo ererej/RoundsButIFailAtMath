@@ -22,10 +22,10 @@ namespace RoundsButIFailAtMath
         private const string ModNameShort = "RBMath";
         private const string ModVersion = "1.0.0";
 
-        private static float rangeMin;
-        private static float rangeMax;
-        private static ConfigEntry<float> RangeMinConfig;
-        private static ConfigEntry<float> RangeMaxConfig;
+        private static float rangeMin, rangeMax;
+        private const float sliderRange = 5f;
+        private static ConfigEntry<float> RangeMinConfig, RangeMaxConfig;
+        private static UnityEngine.UI.Slider RangeMinSlider, RangeMaxSlider;
 
         private void Awake()
         {
@@ -39,6 +39,7 @@ namespace RoundsButIFailAtMath
             rangeMin = RangeMinConfig.Value;
             rangeMax = RangeMaxConfig.Value;
 
+            
             // Registers
             Unbound.RegisterMenu(ModName, () => { }, NewGUI, null, false);
             GameModeManager.AddHook(GameModeHooks.HookGameStart, this.RandomiseCardStats);
@@ -47,11 +48,27 @@ namespace RoundsButIFailAtMath
         // Methods to be called on slider update
         void RangeMinSliderAction(float val)
         {
+            // Stretch slider as user approches the edge
+            if (RangeMinSlider != null)
+            {
+                if (RangeMinSlider.minValue - val > -0.1f) { RangeMinSlider.minValue -= 0.1f; }
+                else if (RangeMinSlider.minValue < -sliderRange) { RangeMinSlider.minValue += 0.1f; }
+                if (RangeMinSlider.maxValue - val < 0.1f) { RangeMinSlider.maxValue += 0.1f; }
+                else if (RangeMinSlider.maxValue > sliderRange) { RangeMinSlider.maxValue -= 0.1f; }
+            }
             RangeMinConfig.Value = val;
             rangeMin = val;
         }
         void RangeMaxSliderAction(float val)
         {
+            // Stretch slider as user approches the edge
+            if (RangeMaxSlider != null)
+            {
+                if (RangeMaxSlider.minValue - val > -0.1f) { RangeMaxSlider.minValue -= 0.1f; }
+                else if (RangeMaxSlider.minValue < -sliderRange) { RangeMaxSlider.minValue += 0.1f; }
+                if (RangeMaxSlider.maxValue - val < 0.1f) { RangeMaxSlider.maxValue += 0.1f; }
+                else if (RangeMaxSlider.maxValue > sliderRange) { RangeMaxSlider.maxValue -= 0.1f; }
+            }
             RangeMaxConfig.Value = val;
             rangeMax = val;
         }
@@ -60,8 +77,8 @@ namespace RoundsButIFailAtMath
         private void NewGUI(GameObject menu)
         {
             MenuHandler.CreateText("Set Multiplier Range", menu, out TextMeshProUGUI _, 60);
-            MenuHandler.CreateSlider("Min", menu, 50, -5f, 5f, RangeMinConfig.Value, RangeMinSliderAction, out UnityEngine.UI.Slider rangeMinSlider);
-            MenuHandler.CreateSlider("Max", menu, 50, -5f, 5f, RangeMaxConfig.Value, RangeMaxSliderAction, out UnityEngine.UI.Slider rangeMaxSlider);
+            MenuHandler.CreateSlider("Min", menu, 50, -sliderRange, sliderRange, RangeMinConfig.Value, RangeMinSliderAction, out RangeMinSlider);
+            MenuHandler.CreateSlider("Max", menu, 50, -sliderRange, sliderRange, RangeMaxConfig.Value, RangeMaxSliderAction, out RangeMaxSlider);
         }
 
         private IEnumerator RandomiseCardStats(IGameModeHandler gm)
