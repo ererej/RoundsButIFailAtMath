@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using BepInEx;
 using BepInEx.Configuration;
@@ -26,6 +27,7 @@ namespace RoundsButIFailAtMath
         private const float sliderRange = 5f;
         private static ConfigEntry<float> RangeMinConfig, RangeMaxConfig;
         private static UnityEngine.UI.Slider RangeMinSlider, RangeMaxSlider;
+        private static Dictionary<string, Dictionary<string, string>> defaultCards = new Dictionary<string, Dictionary<string, string>>(); // gross
 
         private void Awake()
         {
@@ -39,10 +41,9 @@ namespace RoundsButIFailAtMath
             rangeMin = RangeMinConfig.Value;
             rangeMax = RangeMaxConfig.Value;
 
-            
             // Registers
             Unbound.RegisterMenu(ModName, () => { }, NewGUI, null, false);
-            GameModeManager.AddHook(GameModeHooks.HookGameStart, this.RandomiseCardStats);
+            GameModeManager.AddHook(GameModeHooks.HookGameStart, (IGameModeHandler gm) => RandomiseCardStats(gm));
         }
 
         // Methods to be called on slider update
@@ -88,11 +89,22 @@ namespace RoundsButIFailAtMath
             // Loop through all cards
             foreach (CardInfo card in CardChoice.instance.cards)
             {
-                card.cardStats = CardChoice.instance.GetSourceCard(card).cardStats;
+                // Intercept and save default card
+                Logger.LogInfo(!defaultCards.ContainsKey(card.cardName));
+                if (!defaultCards.ContainsKey(card.cardName))
+                {
+                    defaultCards.Add(card.cardName, new Dictionary<string, string>());
+                    foreach (CardInfoStat stat in card.cardStats)
+                    {
+                        defaultCards[card.cardName].Add(stat.stat, stat.amount);
+                    }
+                }
+
                 // Loop through each stat on the card
                 foreach (CardInfoStat stat in card.cardStats)
                 {
                     // Parseable version of the label
+                    stat.amount = defaultCards[card.cardName][stat.stat];
                     string label = Regex.Replace(stat.amount, "[^0-9.+-]", "");
 
                     // Randomise multiplier
