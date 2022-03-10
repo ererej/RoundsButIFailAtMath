@@ -52,10 +52,10 @@ namespace RoundsButIFailAtMath
             // Stretch slider as user approches the edge
             if (RangeMinSlider != null)
             {
-                if (RangeMinSlider.minValue - val > -0.1f) { RangeMinSlider.minValue -= 0.1f; }
-                else if (RangeMinSlider.minValue < -sliderRange) { RangeMinSlider.minValue += 0.1f; }
-                if (RangeMinSlider.maxValue - val < 0.1f) { RangeMinSlider.maxValue += 0.1f; }
-                else if (RangeMinSlider.maxValue > sliderRange) { RangeMinSlider.maxValue -= 0.1f; }
+                if (RangeMinSlider.minValue - val > -0.1f) { RangeMinSlider.minValue = val - 0.1f; } // L -> L
+                else if (RangeMinSlider.minValue < -SLIDER_RANGE) { RangeMinSlider.minValue = val + 0.1f; } // L -> R
+                if (RangeMinSlider.maxValue - val < 0.1f) { RangeMinSlider.maxValue = val + 0.1f; } // R -> R
+                else if (RangeMinSlider.maxValue > SLIDER_RANGE) { RangeMinSlider.maxValue = val - 0.1f; } // R -> L
             }
             RangeMinConfig.Value = val;
             rangeMin = val;
@@ -65,10 +65,10 @@ namespace RoundsButIFailAtMath
             // Stretch slider as user approches the edge
             if (RangeMaxSlider != null)
             {
-                if (RangeMaxSlider.minValue - val > -0.1f) { RangeMaxSlider.minValue -= 0.1f; }
-                else if (RangeMaxSlider.minValue < -sliderRange) { RangeMaxSlider.minValue += 0.1f; }
-                if (RangeMaxSlider.maxValue - val < 0.1f) { RangeMaxSlider.maxValue += 0.1f; }
-                else if (RangeMaxSlider.maxValue > sliderRange) { RangeMaxSlider.maxValue -= 0.1f; }
+                if (RangeMaxSlider.minValue - val > -0.1f) { RangeMaxSlider.minValue = val - 0.1f; } // L -> L
+                else if (RangeMaxSlider.minValue < -SLIDER_RANGE) { RangeMaxSlider.minValue = val + 0.1f; } // L -> R
+                if (RangeMaxSlider.maxValue - val < 0.1f) { RangeMaxSlider.maxValue = val + 0.1f; } // R -> R
+                else if (RangeMaxSlider.maxValue > SLIDER_RANGE) { RangeMaxSlider.maxValue = val - 0.1f; } // R -> L
             }
             RangeMaxConfig.Value = val;
             rangeMax = val;
