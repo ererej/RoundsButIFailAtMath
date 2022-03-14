@@ -165,7 +165,7 @@ namespace RoundsButIFailAtMath
                             stat.positive = (amount < 0);
                             if (stat.amount.EndsWith("%"))
                             {
-                                block.cdMultiplier = amount/100f;
+                                block.cdMultiplier = 1f + amount/100f;
                                 stat.amount = (!stat.positive? "+":"") + amount + "%";
                             }
                             else
@@ -197,7 +197,7 @@ namespace RoundsButIFailAtMath
 
                         case "Bullet speed":
                         case "Bullet speed ":
-                            gun.projectileSpeed = amount/100f;
+                            gun.projectileSpeed = 1f + amount/100f;
                             stat.positive = (amount >= 0);
                             stat.amount = (stat.positive? "+":"") + amount + "%";
                             break;
@@ -207,16 +207,16 @@ namespace RoundsButIFailAtMath
                             break;
                             
                         case "DMG":
-                            gun.damage = amount/100f;
+                            gun.damage = Math.Max(1f + amount/100f, 0f);
                             stat.positive = (amount >= 0);
-                            stat.amount = (stat.positive? "+":"") + amount + "%";
+                            stat.amount = (stat.positive? "+":"") + Math.Max(amount, -100) + "%";
                             break;
 
                         case "Health":
                         case "HP":
-                            stat.positive = (amount >= 0);
                             charstat.health = Math.Max(1f + amount/100f, 0.5f); // Prevent neg. HP (-50%/x0.5 min)
-                            stat.amount = (stat.positive? "+":"") + amount + "%";
+                            stat.positive = (amount >= 0);
+                            stat.amount = (stat.positive? "+":"") + Math.Max(100 + amount, 50) + "%";
                             break;
 
                         case "Life steal":
@@ -226,7 +226,7 @@ namespace RoundsButIFailAtMath
                             break;
 
                         case "Projectile speed":
-                            gun.projectielSimulatonSpeed = amount/100f;
+                            gun.projectielSimulatonSpeed = 1f + amount/100f;
                             stat.positive = (amount >= 0);
                             stat.amount = (stat.positive? "+":"") + amount + "%";
                             break;
@@ -236,7 +236,7 @@ namespace RoundsButIFailAtMath
                             if (stat.amount.EndsWith("%"))
                             {
                                 stat.positive = (amount >= 0);
-                                gun.reloadTime = amount/100f;
+                                gun.reloadTime = 1f + amount/100f;
                                 stat.amount = (!stat.positive ? "+" : "") + amount + "%";
                             }
                             else
