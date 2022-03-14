@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using BepInEx;
 using BepInEx.Configuration;
+using Photon.Pun;
 using UnboundLib;
 using UnboundLib.GameModes;
 using UnboundLib.Utils.UI;
+using UnboundLib.Networking;
 using UnityEngine;
 using TMPro;
 
@@ -23,8 +25,9 @@ namespace RoundsButIFailAtMath
         private const string ModNameShort = "RBMath";
         private const string ModVersion = "1.0.0";
 
+        private static int seed;
         private static float rangeMin, rangeMax;
-        private const float sliderRange = 5f;
+        private const float SLIDER_RANGE = 5f;
         private static ConfigEntry<float> RangeMinConfig, RangeMaxConfig;
         private static UnityEngine.UI.Slider RangeMinSlider, RangeMaxSlider;
         private static Dictionary<string, Dictionary<string, string>> defaultCards = new Dictionary<string, Dictionary<string, string>>(); // gross
@@ -42,8 +45,26 @@ namespace RoundsButIFailAtMath
             rangeMax = RangeMaxConfig.Value;
 
             // Registers
+            Unbound.RegisterHandshake(ModID, OnHandShakeCompleted);
             Unbound.RegisterMenu(ModName, () => { }, NewGUI, null, false);
-            GameModeManager.AddHook(GameModeHooks.HookGameStart, (IGameModeHandler gm) => RandomiseCardStats(gm));
+            GameModeManager.AddHook(GameModeHooks.HookGameStart, OnGameStart);
+        }
+
+        private void OnHandShakeCompleted()
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            seed = Environment.TickCount; // Explicit seed for syncing purposes
+            NetworkingManager.RPC_Others(typeof(RoundsButIFailAtMath), nameof(SyncClients), rangeMin, rangeMax, seed);
+            RandomiseCardStats(); // Randomise for host
+        }
+
+        [UnboundRPC]
+        private static void SyncClients(float _rangeMin, float _rangeMax, int _seed)
+        {
+            rangeMin = _rangeMin;
+            rangeMax = _rangeMax;
+            seed = _seed;
+            RandomiseCardStats(); // Randomise for clients, to prevent race condition
         }
 
         // Methods to be called on slider update
@@ -78,19 +99,24 @@ namespace RoundsButIFailAtMath
         private void NewGUI(GameObject menu)
         {
             MenuHandler.CreateText("Set Multiplier Range", menu, out TextMeshProUGUI _, 60);
-            MenuHandler.CreateSlider("Min", menu, 50, -sliderRange, sliderRange, RangeMinConfig.Value, RangeMinSliderAction, out RangeMinSlider);
-            MenuHandler.CreateSlider("Max", menu, 50, -sliderRange, sliderRange, RangeMaxConfig.Value, RangeMaxSliderAction, out RangeMaxSlider);
+            MenuHandler.CreateSlider("Min", menu, 50, -SLIDER_RANGE, SLIDER_RANGE, RangeMinConfig.Value, RangeMinSliderAction, out RangeMinSlider);
+            MenuHandler.CreateSlider("Max", menu, 50, -SLIDER_RANGE, SLIDER_RANGE, RangeMaxConfig.Value, RangeMaxSliderAction, out RangeMaxSlider);
         }
 
-        private IEnumerator RandomiseCardStats(IGameModeHandler gm)
+        private IEnumerator OnGameStart(IGameModeHandler _)
         {
-            System.Random rng = new System.Random();
+            OnHandShakeCompleted();
+            yield break;
+        }
+
+        private static void RandomiseCardStats()
+        {
+            System.Random rng = new System.Random(seed);
 
             // Loop through all cards
             foreach (CardInfo card in CardChoice.instance.cards)
             {
                 // Intercept and save default card
-                Logger.LogInfo(!defaultCards.ContainsKey(card.cardName));
                 if (!defaultCards.ContainsKey(card.cardName))
                 {
                     defaultCards.Add(card.cardName, new Dictionary<string, string>());
@@ -189,7 +215,7 @@ namespace RoundsButIFailAtMath
                         case "Health":
                         case "HP":
                             stat.positive = (amount >= 0);
-                            charstat.health = Math.Max(1f + amount/100f, 0.5f); // Prevent neg. HP (blackhole)
+                            charstat.health = Math.Max(1f + amount/100f, 0.5f); // Prevent neg. HP (-50%/x0.5 min)
                             stat.amount = (stat.positive? "+":"") + amount + "%";
                             break;
 
@@ -220,15 +246,9 @@ namespace RoundsButIFailAtMath
                         case "Splash DMG":
                             // TODO: Figure out how splash dmg is applied
                             break;
-
-                        default:
-                            Logger.LogWarning("Unknown stat '" + stat.stat + ": " + stat.amount + "' encountered");
-                            break;
                     }
                 }
             }
-
-            yield break;
         }
     }
 }
