@@ -1,6 +1,6 @@
 {
-    "name": "[ONLINE] RoundsButIFailAtMath",
-    "version_number": "1.0.1",
+    "name": "RoundsButIFailAtMath",
+    "version_number": "1.0.2",
     "website_url": "https://github.com/Senyksia/RoundsButIFailAtMath",
     "description": "A party mod that randomises card stats each game!",
     "dependencies": [

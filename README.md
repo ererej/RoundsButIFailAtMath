@@ -5,6 +5,7 @@ Currently only modifies generic face stats - e.g. Explosive Bullets's radius is 
 
 ## Known Issues
 - **[Drill Ammo]**'s drill distance and **[Demonic Pact]**'s splash damage are not randomised.
+- +0 bullet bounces infinitely bounces off the void.
 
 ## Changelog
 See [CHANGELOG.md](https://github.com/Senyksia/RoundsButIFailAtMath/blob/main/CHANGELOG.md) for version changes.

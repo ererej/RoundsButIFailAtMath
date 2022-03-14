@@ -23,7 +23,7 @@ namespace RoundsButIFailAtMath
         private const string ModID = "com.senyksia.rounds.roundsbutifailatmath";
         private const string ModName = "Rounds but I Fail at Math";
         private const string ModNameShort = "RBMath";
-        private const string ModVersion = "1.0.1";
+        private const string ModVersion = "1.0.2";
 
         private static int seed;
         private static float rangeMin, rangeMax;
