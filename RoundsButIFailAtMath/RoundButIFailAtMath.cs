@@ -232,15 +232,19 @@ namespace RoundsButIFailAtMath
                             break;
 
                         case "Reload speed":
-                            gun.reloadTime = amount/100f;
-                            stat.positive = (amount >= 0);
-                            stat.amount = (stat.positive? "+":"") + amount + "%";
-                            break;
-
                         case "Reload time":
-                            gun.reloadTimeAdd = amount;
-                            stat.positive = (amount < 0);
-                            stat.amount = (!stat.positive? "+":"") + amount + "s";
+                            if (stat.amount.EndsWith("%"))
+                            {
+                                stat.positive = (amount >= 0);
+                                gun.reloadTime = amount/100f;
+                                stat.amount = (!stat.positive ? "+" : "") + amount + "%";
+                            }
+                            else
+                            {
+                                stat.positive = (amount < 0);
+                                gun.reloadTimeAdd = amount;
+                                stat.amount = (!stat.positive ? "+" : "") + amount + "s";
+                            }
                             break;
 
                         case "Splash DMG":
