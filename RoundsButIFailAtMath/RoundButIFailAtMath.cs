@@ -23,7 +23,7 @@ namespace RoundsButIFailAtMath
         private const string ModID = "com.senyksia.rounds.roundsbutifailatmath";
         private const string ModName = "Rounds but I Fail at Math";
         private const string ModNameShort = "RBMath";
-        private const string ModVersion = "1.0.0";
+        private const string ModVersion = "1.0.1";
 
         private static int seed;
         private static float rangeMin, rangeMax;
@@ -178,14 +178,14 @@ namespace RoundsButIFailAtMath
                         case "Bullet":
                         case "Bullets":
                             gun.numberOfProjectiles = (int)amount;
-                            stat.positive = (amount >= 0);
+                            stat.positive = ((int)amount >= 0);
                             stat.amount = (stat.positive? "+":"") + (int)amount;
                             break;
 
                         case "Bullet bounce":
                         case "Bullet bounces":
                             gun.reflects = (int)amount;
-                            stat.positive = (amount >= 0);
+                            stat.positive = ((int)amount >= 0);
                             stat.amount = (stat.positive? "+":"") + (int)amount;
                             break;
 
