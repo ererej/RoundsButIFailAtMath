@@ -233,15 +233,14 @@ namespace RoundsButIFailAtMath
 
                         case "Reload speed":
                         case "Reload time":
+                            stat.positive = (amount < 0);
                             if (stat.amount.EndsWith("%"))
                             {
-                                stat.positive = (amount >= 0);
                                 gun.reloadTime = 1f + amount/100f;
                                 stat.amount = (!stat.positive ? "+" : "") + amount + "%";
                             }
                             else
                             {
-                                stat.positive = (amount < 0);
                                 gun.reloadTimeAdd = amount;
                                 stat.amount = (!stat.positive ? "+" : "") + amount + "s";
                             }
