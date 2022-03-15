@@ -216,7 +216,7 @@ namespace RoundsButIFailAtMath
                         case "HP":
                             charstat.health = Math.Max(1f + amount/100f, 0.5f); // Prevent neg. HP (-50%/x0.5 min)
                             stat.positive = (amount >= 0);
-                            stat.amount = (stat.positive? "+":"") + Math.Max(100 + amount, 50) + "%";
+                            stat.amount = (stat.positive? "+":"") + Math.Max(amount, -50) + "%";
                             break;
 
                         case "Life steal":
