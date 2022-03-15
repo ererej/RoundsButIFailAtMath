@@ -125,6 +125,10 @@ namespace RoundsButIFailAtMath
                         defaultCards[card.cardName].Add(stat.stat, stat.amount);
                     }
                 }
+                // Components
+                Gun gun = card.GetComponent<Gun>();
+                Block block = card.GetComponent<Block>();
+                CharacterStatModifiers charstat = card.GetComponent<CharacterStatModifiers>();
 
                 // Loop through each stat on the card
                 foreach (CardInfoStat stat in card.cardStats)
@@ -136,11 +140,6 @@ namespace RoundsButIFailAtMath
                     // Randomise multiplier
                     float MULTIPLIER = (float)(rng.NextDouble() * (rangeMax - rangeMin) + rangeMin);
                     float amount = float.Parse(label) * MULTIPLIER; // Calculate new modifier
-
-                    // Components
-                    Gun gun = card.GetComponent<Gun>();
-                    Block block = card.GetComponent<Block>();
-                    CharacterStatModifiers charstat = card.GetComponent<CharacterStatModifiers>();
 
                     // Update recognised card stats
                     switch (stat.stat)
@@ -175,11 +174,27 @@ namespace RoundsButIFailAtMath
                             }
                             break;
 
-                        case "Bullet":
                         case "Bullets":
-                            gun.numberOfProjectiles = (int)amount;
+                        case "Bullet":
                             stat.positive = ((int)amount >= 0);
                             stat.amount = (stat.positive? "+":"") + (int)amount;
+                            print("["+card.cardName+"]");
+                            switch (card.cardName) // I hate this
+                            {
+                                case "POISON":
+                                case "Demonic pact":
+                                    gun.ammo = (int)amount;
+                                    break;
+
+                                case "BARRAGE":
+                                case "BUCKSHOT":
+                                    gun.numberOfProjectiles = (int)amount;
+                                    break;
+
+                                case "BURST":
+                                    gun.bursts = (int)amount + 1;
+                                    break;
+                            }
                             break;
 
                         case "Bullet bounce":
@@ -196,7 +211,7 @@ namespace RoundsButIFailAtMath
                             break;
 
                         case "Bullet speed":
-                        case "Bullet speed ":
+                        case "Bullet speed ": // Fuck you
                             gun.projectileSpeed = 1f + amount/100f;
                             stat.positive = (amount >= 0);
                             stat.amount = (stat.positive? "+":"") + amount + "%";
