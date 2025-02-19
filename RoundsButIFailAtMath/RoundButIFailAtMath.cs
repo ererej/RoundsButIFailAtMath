@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Globalization;
 using BepInEx;
 using BepInEx.Configuration;
 using Photon.Pun;
@@ -139,7 +140,7 @@ namespace RoundsButIFailAtMath
 
                     // Randomise multiplier
                     float MULTIPLIER = (float)(rng.NextDouble() * (rangeMax - rangeMin) + rangeMin);
-                    float amount = float.Parse(label) * MULTIPLIER; // Calculate new modifier
+                    float amount = float.Parse(label, CultureInfo.InvariantCulture) * MULTIPLIER; // Calculate new modifier. use CultureInfo.InvariantCulture to make sure a period is used as the decimal seperator
 
                     // Update recognised card stats
                     switch (stat.stat)
